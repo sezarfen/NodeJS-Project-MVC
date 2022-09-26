@@ -1,5 +1,5 @@
 # Hello Everyone!
-This is my first attempt to publishing project , Id like to share my first project with nodeJs.
+This is my first attempt to publish a project , I would like to share my first project with nodeJs.
 
 There are some npm packages I used in this project:
 
