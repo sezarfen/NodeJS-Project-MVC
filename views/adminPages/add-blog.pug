@@ -1,0 +1,21 @@
+include ../includes/head.pug
+.container.pt-5
+    if(errorMessage)
+        div(role="alert").alert.alert-danger #{errorMessage}
+
+.container.pt-5
+    div.mb-10(style='color: ffbf00;')
+        form(action="add-blog" method="POST" enctype="multipart/form-data")
+            
+            label(for="image").col-sm-2.col-form-label Image 
+            input(type="file" name="image").form-control#image
+            br
+            label(for="blogTitle").required.form-label Blog Title 
+            input.form-control.form-control-solid(placeholder="Blog başlığı" type="text" name="blogTitle")#blogTitle
+            br
+            label(for="blogContent").required.form-label Blog Description
+            textarea.form-control(aria-label="With textarea" name="blogContent")#blogContent
+            br
+
+            input(type = "submit" value="Add Blog").btn.btn-warning
+        

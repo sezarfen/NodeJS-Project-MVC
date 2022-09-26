@@ -1,0 +1,21 @@
+include ../includes/head
+
+
+.container 
+    .row.pt-4 
+        if(errorMessage)
+            div(role="alert").alert.alert-danger #{errorMessage}
+
+    .row.pt-4
+        .col-md-3 
+        .col-md-6(style='color: ffbf00;')
+            form(action="/login" method="POST")
+                div.mb-3
+                    label(for="userEmail").form-label Email address
+                    input(type="email" aria-describedby="emailHelp" name="userEmail").form-control#userEmail
+                    div.form-text#emailHelp We'll never share your email with anyone else.
+                div.mb-3
+                    label(for="userPassword").form-label Password
+                    input(type="password" name="userPassword").form-control#userPassword
+                button(type="submit").btn.btn-primary Submit
+        .col-md-3

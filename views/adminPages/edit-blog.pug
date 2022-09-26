@@ -1,0 +1,25 @@
+include ../includes/head.pug
+
+.container.pt-5
+    div.mb-10(style='color: ffbf00;')
+        form(action="edit-blog" method="POST" enctype="multipart/form-data")
+
+            div.text-center
+                img(src=`${blog.imageUrl}` width ="200px" height = "100px") 
+           
+            input(type="hidden" value=`${blog.id}` name="blogId")
+          
+            label(for="image").required.form-label Blog Image
+            input.form-control.form-control-solid(type="file" name="image")#blogImage
+            br
+
+            label(for="blogTitle").required.form-label Blog Title 
+            input.form-control.form-control-solid(placeholder="Blog başlığı" type="text" name="blogTitle" value=`${blog.title}`)#blogTitle
+            br
+
+            label(for="blogContent").required.form-label Blog Description
+            textarea.form-control(aria-label="With textarea" name="blogContent")#blogContent #{blog.content}
+            br
+
+            input(type = "submit" value="Save Blog").btn.btn-warning
+        

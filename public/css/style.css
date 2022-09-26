@@ -1,0 +1,29 @@
+.profile {
+    border-radius: 50%;
+    color: aliceblue;
+    border: 2px;
+    border-color: brown;
+    
+}
+
+.myHeader{
+    opacity: 0.8;
+}
+
+.myHeader:hover{
+    opacity: 1;
+}
+
+.link{
+    text-decoration: solid;
+    color: rgb(229, 16, 16);
+}
+
+.currentLink {
+    color:rgb(62, 225, 135) !important; font-weight: bold;
+}
+
+.commentSection{
+    border-color:white;
+    border: 1px !important;
+}

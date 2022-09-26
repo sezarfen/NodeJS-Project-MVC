@@ -1,0 +1,39 @@
+include ../includes/head
+
+.container 
+    .row.pt-4
+        .col-md-3 
+        .col-md-6(style='color: ffbf00;')
+            form(action="/register" method="POST")
+                .row 
+                    .col-md-6 
+                        label(for="fullName").form-label Fullname
+                        input(type="text" name="fullName").form-control#fullName
+                    .col-md-6 
+                        label(for="userName").form-label Username
+                        input(type="text" name="userName").form-control#userName
+                    
+                div.mb-3
+                    label(for="userEmail").form-label Email
+                    input(type="email" name="userEmail").form-control#userEmail
+                .row 
+                    .col-md-6
+                        label(for="userPassword").form-label Password
+                        input(type="password" name="userPassword").form-control#userPassword
+                    .col-md-6
+                        label(for="userPhone").form-label Phone Number
+                        input(type="tel" name="userPhone").form-control#userPhone
+                
+                div.mb-3
+                    label(for="userAbility").form-label Ability
+                    input(type="text" name="userAbility").form-control#userAbility
+                div.mb-3 
+                        label(for="userAdress").form-label Adress
+                        input(type="text" name="userAdress").form-control#userAdress
+                .row 
+                    .col-md-3
+                        label(for="referrerNumber").form-label Reference Number
+                        input(type="text" name="referrerNumber").form-control#referrerNumber
+                    div.form-text.mb-3 Do you have any reference? Please share with us! (*Not Required)
+                button(type="submit").btn.btn-primary Submit
+        .col-md-3

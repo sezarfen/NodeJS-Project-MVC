@@ -1,0 +1,53 @@
+include ../includes/head
+
+
+if(infoMessage)
+    .container 
+        .row.pt-4 
+            div(role="alert").alert.alert-success #{infoMessage}
+
+
+.container(style="color: white;")
+    .row.text-center
+        img(src=`${blog.imageUrl}`, alt="Camii" width="600px" height="600px")
+    .row.text-center
+        h1 #{blog.title}
+    .row 
+        p #{blog.content}
+
+
+section
+  .container
+    .row
+      .col-sm-5.col-md-6.col-12.pb-4.text-white
+        h1 Comments
+        hr
+        if(blog.comments)
+            each comment in blog.comments
+                .comment.mt-4.text-justify.float-left
+                img.rounded-circle(src='https://i.imgur.com/yTFUilP.jpg' alt='' width='40' height='40')
+                h4(style="color: rgb(62, 225, 135)") #{comment.publisherName}
+                span(style="color: blanchedalmond") #{comment.postedAt}
+                br
+                h5
+                    |#{comment.content}
+                if(currentUser.isAdmin == true)
+                  form(action="/admin/deleteComment" method="post")
+                    input(type="hidden" value=`${comment.commentId}` name="commentId")
+                    input(type="hidden" value=`${blog.id}` name="blogId")
+                    input(type="submit" value="Yorumu sil").btn.btn-danger
+                    //- eğer currentUser yorumun sahibi ise o da silsin diyebiliriz ama yine admin linkine onay gidiyor isAdmin gerektiriyor
+
+
+            
+      .col-lg-4.col-md-5.col-sm-4.offset-md-1.offset-sm-1.col-12.mt-4.text-white 
+        form(action="/newBlogComment" method="Post")#algin-form
+          .form-group
+            h4 Leave a comment
+            label(for="blogComment" style="color: white;").required.form-label Blog Comment
+            textarea.form-control(aria-label="With textarea" name="blogComment")#blogComment
+          .form-group
+            input(type="hidden" name="commenterId" value=`${currentUser._id}`)
+            input(type="hidden" name="publisherName" value=`${currentUser.username}`)
+            input(type="hidden" name="blogId" value=`${blog.id}`)
+            input.btn.btn-success.mt-1(type='submit' value=" Post Comment")

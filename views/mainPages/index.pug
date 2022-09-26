@@ -1,0 +1,12 @@
+include ../includes/head
+include ../mixins/createCard.pug
+
+div.container
+    div.row
+        div.col-md-4
+            include ../includes/lastday
+
+        div.col-md-8.text-center.pt-3.card-list
+            div.row
+              each blog in blogs
+                +createCard(blog)

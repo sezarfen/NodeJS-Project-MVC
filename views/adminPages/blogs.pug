@@ -1,0 +1,26 @@
+include ../includes/head.pug
+
+.container.pt-5
+    div.mb-10
+        table.table.table-dark.table-striped.table-hover
+            thead
+                tr
+                    td Blog ismi
+                    td İçerik
+                    td Paylaşan ID 
+                    td Yönetim
+            tbody
+                each blog in blogs
+                 - let text = blog.content.legnth > 40 ? blog.content : blog.content.slice(0,40) + "..."
+                    tr
+                    td #{blog.title}
+                    td #{text}
+                    td #{blog.editorId}
+                    td
+                        .btn-group
+                            form.form(action="/admin/delete-blog" method="POST")
+                                input(type="hidden" value=`${blog.id}` name="blogId")
+                                input(type="submit" value="Delete Blog").btn.btn-danger
+                            form.form(action="/admin/blogs" method="POST")
+                                input(type="hidden" value=`${blog.id}` name="blogId")
+                                input(type="submit" value="Edit Blog").btn.btn-warning

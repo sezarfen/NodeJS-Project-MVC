@@ -1,0 +1,13 @@
+div.d-flex.flex-column.align-items-stretch.flex-shrink-0.bg-white(style="width: 380px;")
+    .d-flex.align-items-center.flex-shrink-0.p-3.link-dark.text-decoration-none.border-bottom
+        svg.bi.pe-none.me-2(width="30" height="24") use(xlink:href="#bootstrap")
+        span.fs-5.fw-semibold Yeni Eklenenler
+
+    each blog in blogs
+        div.list-group.list-group-flush.border-bottom.scrollarea
+            a(href=`/blogIndex/${blog.id}` aria-current="true").list-group-item.list-group-item-action.active.py-3.lh-sm
+                div.d-flex.w-100.align-items-center.justify-content-between
+                    strong.mb-1List #{blog.title}
+                    small Wed
+                div.col-10.mb-1.small #{blog.content}
+

@@ -1,0 +1,41 @@
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet")
+        link(href="/css/style.css" rel="stylesheet")
+        script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" defer)
+        title #{title}
+
+
+        header.p-3.text-bg-dark.myHeader
+            div.container
+                div.d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start
+                    a(href="/").d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none
+                        svg.bi.me-2(width="40" height="32" role="img" aria-label="Bootstrap")
+                            use(xlink:href="#bootstrap")
+
+                    ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-center.mb-md-0
+                                    
+                        li
+                            a(href="/").nav-link.px-2.text-warning Home
+                        if(isAuthenticated)
+                            li
+                                a(href="/notifications" class= currentUrl=="/notifications" ?"currentLink" : "").nav-link.px-2.text-warning Notifications
+                            li
+                                a(href="/admin/add-blog" class= currentUrl=="/admin/add-blog" ? "currentLink" : "").nav-link.px-2.text-warning Add Blog
+                            li
+                                a(href="/admin/blogs" class= currentUrl=="/admin/blogs" ? "currentLink" : "").nav-link.px-2.text-warning Edit Blogs
+                            li
+                                a(href="/subUsers" class= currentUrl =="/subUsers" ? "currentLink" : "").nav-link.px-2.text-warning SubUsers
+                    
+
+                    div.text-end
+                    if (!isAuthenticated)
+                        a(type="button" href="/login").btn.btn-outline-light.me-2 Login
+                        a(type="button" href="/register").btn.btn-warning Sign-up
+                    else
+                        a(type="button" href="/profile" class= currentUrl =="/profile" ? "currentLink" : "").btn.btn-outline-light.me-2.profile Profile
+                        a(type="button" href="/logout").btn.btn-outline-light.me-2.profile Logout
+    body(style='background-image: url("/img/backgroundImage.jpg"); background-repeat: no-repeat; background-size: cover;') 

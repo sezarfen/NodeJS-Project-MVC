@@ -1,0 +1,55 @@
+include ../includes/head.pug
+
+.container.pt-5
+    div.mb-10
+        if(referenceNotifications)
+            each notification in referenceNotifications
+                table.table.table-dark.table-striped.table-hover
+                    thead
+                        tr
+                            td Type
+                            td Kullanıcı ismi
+                            td İçerik
+                            td Yönetim
+                    tbody
+                        tr 
+                            td Referans Onay
+                            td #{notification.username}
+                            td #{notification.type}
+                            td
+                                .btn-group
+                                    form.form(action="/acceptRequest" method="POST")
+                                        input(type="hidden" value=`${notification.id}` name="subUserId")
+                                        input(type="submit" value="Kabul Et").btn.btn-success
+                                    form.form(action="/rejectRequest" method="POST")
+                                        input(type="hidden" value=`${notification.id}` name="subUserId")
+                                        input(type="submit" value="Reddet").btn.btn-danger
+        if(commentNotifications) 
+            each notification in commentNotifications
+                - newComment = notification.newComment
+                table.table.table-dark.table-striped.table-hover
+                    thead
+                        tr
+                            td Type
+                            td Publisher Name / ID
+                            td Blog ID
+                            td Content 
+                            td Yönetim
+                    tbody
+                        tr 
+                            td Yorum Onay
+                            td #{newComment.publisherName} / #{newComment.publisherId}
+                            td #{newComment.blogId}
+                            td #{newComment.content}
+                            td
+                                .btn-group
+                                    form.form(action="/admin/acceptComment" method="POST")
+                                        input(type="hidden" value=`${newComment._id}` name="commentId")
+                                        input(type="submit" value="Yayınla").btn.btn-success
+                                    form.form(action="/admin/rejectComment" method="POST")
+                                        input(type="hidden" value=`${newComment._id}` name="commentId")
+                                        input(type="submit" value="Reddet").btn.btn-danger
+
+    
+        else 
+            h1(style="color : white") No Notifications

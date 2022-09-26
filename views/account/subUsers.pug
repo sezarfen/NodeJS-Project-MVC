@@ -1,0 +1,31 @@
+include ../includes/head.pug
+
+
+.container.pt-5
+    div.mb-10
+        if(subUsers)
+            each subUser in subUsers
+                table.table.table-dark.table-striped.table-hover
+                    thead
+                        tr
+                            td Username
+                            td Email
+                            td isAdmin 
+                            td referenceNumber
+                            td 
+                    tbody
+                            tr 
+                            td #{subUser.username}
+                            td #{subUser.email}
+                            td #{subUser.isAdmin}
+                            td #{subUser.referenceNumber}
+                            td
+                                .btn-group
+                                    a(href=`/profile/${subUser.username}`)
+                                        input(type="hidden" value=`${subUser._id}` name="subUserId")
+                                        input(type="submit" value="İletişime geç").btn.btn-success
+                                    form.form(action="/deleteSubUser" method="POST")
+                                        input(type="hidden" value=`${subUser._id}` name="subUserId")
+                                        input(type="submit" value="Kaldır").btn.btn-danger
+        else 
+            h1 No SubUsers

@@ -1,0 +1,11 @@
+mixin createCard(blog)
+  - let text = blog.content.legnth > 30 ? blog.content : blog.content.slice(0,30) + "..." 
+    
+  div.card(style="width: 18rem; background-color: #eeee;").m-3
+      a(href=`/blogIndex/${blog.id}`) 
+        img(src=`${blog.imageUrl}` alt="Image").card-img-top
+      div.card-body
+          h5.card-title #{blog.title}
+          p.card-text #{text}
+          a(href=`/blogIndex/${blog.id}`).btn.btn-primary Read More!
+          
