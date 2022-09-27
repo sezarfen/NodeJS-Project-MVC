@@ -19,6 +19,8 @@ There are some npm packages I used in this project:
 -> in order to be able to take files via requests
 #### bcrypt
 -> Hashing passwords
+#### axios
+-> fetching data from GraphQL
 
 
 ## Features
