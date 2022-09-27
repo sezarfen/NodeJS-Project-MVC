@@ -9,12 +9,11 @@ const bodyParser = require("body-parser");
 const path = require('path');
 const multer = require('multer');
 
-
+// Middlewares and Schemas
 const errorController = require("./controllers/errorController");
 const locals = require("./middlewares/locals");
 const isAdmin = require("./middlewares/isAdmin");
 const User = require("./models/User");
-
 
 const {typeDefs} = require("./GraphQL/type-defs");
 const {resolvers} = require("./GraphQL/resolvers");

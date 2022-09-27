@@ -4,20 +4,22 @@ const Blog = require("../models/Blog");
 const Comment = require("../models/Comment");
 const fs = require('fs');
 
-const DeleteCommentNotificationFromAdmin = async (commentId) =>{
-    const admins = await User.find({ isAdmin: true });
-        admins.forEach(async (admin) => {
-            const notifications = admin.notifications;
-            const index = await notifications.findIndex(async notification => {
-                const newComment = await notification.newComment  // Böyle ayrıştırmayınca bulamıyordu
-                const newCommentId = await newComment._id 
-                return newCommentId.toString() === commentId.toString();
-            });
-            notifications.splice(index, 1);
-            admin.notifications = notifications;
+const DeleteCommentNotificationFromAdmin = async (commentId) => {
 
-            admin.save();
+    const admins = await User.find({ isAdmin: true });
+    admins.forEach(async (admin) => {
+        const notifications = admin.notifications;
+        const index = await notifications.findIndex(async notification => {
+            const newComment = await notification.newComment
+            const newCommentId = await newComment._id
+            return newCommentId.toString() === commentId.toString();
         });
+        notifications.splice(index, 1);
+        admin.notifications = notifications;
+
+        admin.save();
+
+    });
 }
 
 exports.getAddBlog = (req, res, next) => {
@@ -35,6 +37,7 @@ exports.postAddBlog = (req, res, next) => {
           content
           imageUrl
           editorId
+          editorName
         }
       }`;
 
@@ -46,6 +49,7 @@ exports.postAddBlog = (req, res, next) => {
                 "title": req.body.blogTitle,
                 "content": req.body.blogContent,
                 "editorId": req.user._id,
+                "editorName": req.user.username,
                 "imageUrl": "/img/" + req.file.filename
             }
         };
@@ -105,10 +109,13 @@ exports.getBlogs = (req, res, next) => {
 }
 
 exports.postDeleteBlog = async (req, res, next) => {
+
     const blogId = req.body.blogId;
 
-
     const blog = await Blog.findOne({ _id: blogId }).then(blog => blog).catch(e => console.log(e));
+
+
+    // blog silinince onun içerisindeki yorumların isActive özelliği false dönebilir    
 
 
     fs.unlink("public" + blog.imageUrl, err => {
@@ -116,7 +123,6 @@ exports.postDeleteBlog = async (req, res, next) => {
             console.log(err)
         }
     })
-
 
 
     const query = `mutation DeleteBlog($deleteBlogId: ID!) {
@@ -131,6 +137,11 @@ exports.postDeleteBlog = async (req, res, next) => {
     graphqlFunctions.MutateBlog(query, variables).then(() => {
 
         res.redirect("/admin/blogs");
+
+
+
+
+
     }).catch(err => console.log(err));
 
 
@@ -210,85 +221,123 @@ exports.errorController = (error, res) => {
 }
 
 
-exports.postAcceptComment = async (req,res) =>{
+exports.postAcceptComment = async (req, res) => {
 
     const commentId = await req.body.commentId;
-   
-    const comment = await Comment.findById(commentId).then(comment=>comment).catch(e=>console.log(e));
+
+    const comment = await Comment.findById(commentId).then(comment => comment).catch(e => console.log(e));
 
 
-    Blog.findById(comment.blogId).then(async blog=>{
-        
+    Blog.findById(comment.blogId).then(async blog => {
+
         const comments = blog.comments;
-        comments.push({commentId : comment._id ,publisherName : comment.publisherName ,publisherId : comment.publisherId , content : comment.content});
+        comments.push({ commentId: comment._id });
         blog.comments = comments;
         return blog.save();
 
-    }).then(()=>{
+    })
+        .then(() => {
 
-        comment.isActive = true;
-        return comment.save();
+            comment.isActive = true;
+            return comment.save();
 
-    }).then(async ()=>{
+        })
+        .then(async () => {
+
+            await DeleteCommentNotificationFromAdmin(commentId);
+
+            res.redirect("/notifications")
+
+        })
+        .catch(e => console.log(e));
+
+
+    // Yorumun atıldığı bloğun comments kısmına bu yorumu ekle *****
+    // yorumun isActive özelliği true olsun ***********
+    // adminlerden bildirimi sil ***********
+}
+
+
+exports.postRejectComment = async (req, res) => {
+
+    // bu yorumu ve tüm adminlerdeki bildirimi sil (bu yorumla alakalı olanları) ********
+
+    const commentId = await req.body.commentId;
+
+    Comment.findByIdAndDelete(commentId).then(async () => {
 
         await DeleteCommentNotificationFromAdmin(commentId);
 
-        res.redirect("/notifications")
-
-    }).catch(e=>console.log(e));
-
-
-// Yorumun atıldığı bloğun comments kısmına bu yorumu ekle *****
-// yorumun isActive özelliği true olsun ***********
-// adminlerden bildirimi sil ***********
-}
-
-
-exports.postRejectComment = async (req,res) =>{
-
-// bu yorumu ve tüm adminlerdeki bildirimi sil (bu yorumla alakalı olanları) ********
-
-const commentId = await req.body.comment;
-
-Comment.findByIdAndDelete(commentId).then(async()=>{
-
-    await DeleteCommentNotificationFromAdmin(commentId);
-
-    res.redirect("/notifications");
-}).catch(e=>console.log(e));
+        res.redirect("/notifications");
+    }).catch(e => console.log(e));
 
 }
 
 
-exports.postdeleteComment = (req,res) => {
+exports.postdeleteComment = (req, res) => {
     // DB'den comments'den yorumu sil +++++
     // bloğun içinden yorumu sil +++++
+    // Artık blog içerisinden yorumu silmiyoruz isActive özelliğini değiştiriyoruz
 
+    // Blog.findById(blogId).then(async blog=>{
+    //     const comments = blog.comments;
+    //     const index = await comments.findIndex(comment=>{
+    //         return comment.commentId.toString() === commentId.toString()
+    //     })
+    //     comments.splice(index,1);
+    //     blog.comments = comments;
+    //     return blog.save()
 
+    // }).then(()=>{
+    // }).catch(e=>console.log(e));
 
     const commentId = req.body.commentId;
-    const blogId = req.body.blogId;
 
+    Comment.findByIdAndUpdate(commentId, { isActive: false }).then(() => {
 
-    Blog.findById(blogId).then(async blog=>{
+        res.redirect("back");
+
+    }).catch(e => console.log(e));
+
+}
+
+exports.postWarnUser = (req,res) =>{
+
+    const warnedUserId = req.body.warnedUserId;
+    
+    User.findById(warnedUserId).then(async user=>{
         
-        const comments = blog.comments;
-        const index = await comments.findIndex(comment=>{
-            return comment.commentId.toString() === commentId.toString()
-        })
-        comments.splice(index,1);
-        blog.comments = comments;
-        return blog.save()
+        user.warnings += 1;
+        
+        if(user.warnings >= 3){
+            user.warnings += 1;
+
+            user.isBlocked = true;
+            
+            if(user.referrerNumber != 111111){
+                User.findOne({referenceNumber : user.referrerNumber}).then(async rUser=>{
+                    const notifications = await rUser.notifications;
+                    await notifications.push({type : "warning" , content : `${new Date().toUTCString()} tarihinde ${user.username} isimli referans verdiğiniz kullanıcı bloke edilmiştir`});
+                    rUser.notifications = notifications;
+                    rUser.save();
+
+                    // referrer olan kullanıcıya da warnings verilebilir
+
+                }).catch(e=>console.log(e));
+            }
+            
+            return user.save(); 
+        }
+
+        const notifications = await user.notifications;
+        await notifications.push({type : "warning" , content : `${new Date().toUTCString()} tarihinde bir uyarı aldınız`});
+        user.notifications = notifications;
+        return user.save();
 
     }).then(()=>{
+        res.redirect("back");
+    })
 
-        Comment.findByIdAndDelete(commentId).then(()=>{
 
-            res.redirect("back");
-        
-        }).catch(e=>console.log(e));
 
-    }).catch(e=>console.log(e));
-
-    
 }

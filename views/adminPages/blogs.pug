@@ -7,7 +7,7 @@ include ../includes/head.pug
                 tr
                     td Blog ismi
                     td İçerik
-                    td Paylaşan ID 
+                    td Publisher ID / Username
                     td Yönetim
             tbody
                 each blog in blogs
@@ -15,7 +15,7 @@ include ../includes/head.pug
                     tr
                     td #{blog.title}
                     td #{text}
-                    td #{blog.editorId}
+                    td #{blog.editorId} / #{blog.editorName}
                     td
                         .btn-group
                             form.form(action="/admin/delete-blog" method="POST")

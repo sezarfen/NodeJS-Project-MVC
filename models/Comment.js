@@ -28,6 +28,11 @@ const commentSchema = mongoose.Schema({
     isActive : {
         type:Boolean,
         default : false
+    },
+
+    postedAt:{
+        type:String,
+        default: new Date().toUTCString()
     }
 
 

@@ -9,16 +9,13 @@ const typeDefs = gql`
         content: String!
         imageUrl: String!
         editorId: ID!
+        editorName: String!
         comments: [Comment!]
     }
 
     type Comment{
         id: ID!
-        publisherName: String!
-        publisherId: ID!
         commentId: ID!
-        content: String!
-        postedAt: String
     }
 
     type User{
@@ -38,6 +35,8 @@ const typeDefs = gql`
         referenceNumber: ID!
         referrerNumber: ID!
         notifications: [subUser]
+        warnings: Int!
+        isBlocked: Boolean!
     }
 
     type subUser{
@@ -55,6 +54,7 @@ const typeDefs = gql`
         content: String!
         imageUrl: String = "https://via.placeholder.com/262x174"
         editorId: ID!
+        editorName: String!
     }
 
     input editBlogInputs{
@@ -63,6 +63,7 @@ const typeDefs = gql`
         content: String!
         imageUrl: String = "https://via.placeholder.com/262x174"
         editorId: ID!
+        editorName: String!
     }
 
     input addUserInput{
@@ -75,6 +76,8 @@ const typeDefs = gql`
         phoneNumber: String!
         referrerNumber: ID = 111111
         createdAt: String
+        warnings: Int = 0
+        isBlocked: Boolean = false
     }
 
     input followUserInput{

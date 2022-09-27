@@ -32,4 +32,7 @@ router.post("/unfollowUser", accountController.postUnfollowUser);
 
 router.get("/getFollowers", accountController.getFollowers);
 
+router.post("/deleteNotification" , accountController.postDeleteNotification)
+
+
 module.exports = router;

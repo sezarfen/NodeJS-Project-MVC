@@ -53,13 +53,10 @@ exports.getRegister = (_, res) => {
 }
 
 exports.getLogin = (req, res) => {
-
     delete req.session.errorMessage
 
     res.render("account/login", {
-
         title: "Login",
-
     });
 
 }
@@ -85,13 +82,20 @@ exports.postLogin = (req, res) => {
 
                 }
 
-                bcrypt.compare(password, user.password).then( isTrue => {
+                bcrypt.compare(password, user.password).then(isTrue => {
                     if (!isTrue) {
                         return req.session.errorMessage = "Hatalı ya da eksik şifre"
                     }
 
+                    if(user.isBlocked){
+
+                        req.session.errorMessage = "Hesabınız bloke edilmiştir , bilgi almak için yetkililer ile iletişime geçebilirsiniz"
+                        return res.redirect("/login");
+
+                    }
+
                     req.session.user = user;
-                    
+
                     return res.redirect("/");
 
                 })
@@ -119,26 +123,28 @@ exports.postLogin = (req, res) => {
 exports.getLogout = (req, res) => {
 
     delete req.session.user;
-    
+
     res.redirect("/");
+
+}
+
+const notificationFinder = async (req ,type) => {
+    const notifications = await req.user.notifications;
+    return notifications.filter(notification => notification.type == `${type}`)
 
 }
 
 exports.getNotifications = async (req, res) => {
 
-    const notifications = await req.user.notifications;
-    const referenceNotifications = await notifications.filter(notification=>notification.type=="reference") 
-    const commentNotifications = await notifications.filter(notification=>notification.type=="comment") 
-
-    
-
-    console.log(commentNotifications)
+    const referenceNotifications = await notificationFinder(req,"reference")
+    const commentNotifications = await notificationFinder(req,"comment")
+    const warningNotification =  await notificationFinder(req,"warning")
 
     res.render("account/notifications", {
         title: "Notifications",
-        notifications: notifications,
-        referenceNotifications : referenceNotifications,
-        commentNotifications : commentNotifications
+        referenceNotifications: referenceNotifications,
+        commentNotifications: commentNotifications,
+        warningNotification : warningNotification
     });
 
 }
@@ -203,16 +209,18 @@ exports.postRejectRequest = (req, res) => {
 
 exports.getSubUsers = (req, res, next) => {
 
-    // 2 SAAT ASYNC OLAYLARIYLA UĞRAŞTIKRAN SONRA SİNİRLENİLİP setTimeout KULLANILMIŞTIR İLERİDE DÜZELTİLİR 
+    // 2 SAAT ASYNC OLAYLARIYLA UĞRAŞTIKRAN SONRA SİNİRLENİLİP setTimeout KULLANILMIŞTIR İLERİDE DÜZELTİLİR
 
-    const subUsers = [];
+    const subUsers = [];-
 
 
     req.user.subUsers.forEach(subUser => {
-        User.find({ _id: subUser._id }).then(user => {
-            subUsers.push(user[0]);
-        });
+        User.find({ _id: subUser._id })
+            .then(user => {
+                subUsers.push(user[0]);
+            });
     })
+
 
     setTimeout(() => {
         res.render("account/subUsers", {
@@ -260,39 +268,66 @@ exports.postDeleteSubUser = (req, res) => {
 exports.getProfile = async (req, res) => {
     delete req.session.errorMessage
 
-    User.findOne({referenceNumber : req.user.referrerNumber}).then(user=>{
+    User.findOne({ referenceNumber: req.user.referrerNumber }).then(user => {
 
 
-        res.render("account/profile", { 
+        res.render("account/profile", {
             title: "Profile Page",
             user: req.user,
             currentUser: req.user,  // locals'a eklenebilir
             isFollowed: [],
             referrer: user
-            
-        })
-    
 
-    }).catch(e=>console.log(e))
+        })
+
+
+    }).catch(e => console.log(e))
+
+}
+
+
+exports.getSpecificProfile = async (req, res, next) => {
+
+    const username = req.params.username;
+    User.findOne({ username: username }).then(async user => {
+
+        let isFollowed = await req.user.following.filter(id => {
+            return user._id == id
+        })
+
+        User.findOne({ referenceNumber: user.referrerNumber }).then(referrer => {
+            res.render("account/profile", {
+                user: user,
+                title: `${username}'s Profile`,
+                currentUser: req.user,
+                isFollowed: isFollowed,
+                referrer: referrer
+            });
+        }).catch(e => console.log(e));
+
+
+
+    }).catch(e => next("404 Profile Not Found"));
+
 
 }
 
 exports.getReferenceAgain = async (req, res) => {
-    
+
     await User.findOne({ referenceNumber: req.body.newReferenceNumber }).then(user => {
         if (user) {
 
             const notifications = user.notifications ? user.notifications : [];
             const subUsers = user.subUsers ? user.subUsers : [];
 
-            if(subUsers.filter(user=>user._id.toString()===req.user._id.toString()).length > 0){  // içerip içermediğini burada kontrol ediyoruz // güzel bir algoritma
+            if (subUsers.filter(user => user._id.toString() === req.user._id.toString()).length > 0) {  // içerip içermediğini burada kontrol ediyoruz // güzel bir algoritma
 
                 console.log("You have one :D")
 
                 return req.session.errorMessage = "You already have a reference from that person";
 
             }
-            else{
+            else {
 
                 console.log("You don't have one :(")
 
@@ -307,7 +342,7 @@ exports.getReferenceAgain = async (req, res) => {
                 return user.save();
 
             }
-            
+
         }
     });
 
@@ -316,31 +351,7 @@ exports.getReferenceAgain = async (req, res) => {
 
 }
 
-exports.getSpecificProfile = async (req, res ,next) => {
 
-    const username = req.params.username;
-    User.findOne({ username: username }).then(async user => {
-
-        let isFollowed = await req.user.following.filter(id => {
-            return user._id == id
-        })
-
-        User.findOne({referenceNumber: user.referrerNumber}).then(referrer=>{
-            res.render("account/profile", {
-                user: user,
-                title: `${username}'s Profile`,
-                currentUser: req.user,
-                isFollowed: isFollowed,
-                referrer: referrer
-            });
-        }).catch(e=>console.log(e));
-
-        
-
-    }).catch(e => next("404 Profile Not Found"));
-
-
-}
 
 exports.postFollowUser = (req, res) => {
     const followingId = req.body.followingId;
@@ -386,7 +397,7 @@ exports.postUnfollowUser = (req, res) => {
 
     graphqlFunctions.MutateBlog(unfollowQuery, variables).then(() => {
 
-        
+
         res.redirect(`back`)
 
 
@@ -394,20 +405,41 @@ exports.postUnfollowUser = (req, res) => {
 
 }
 
-exports.getFollowers = async (req,res)=>{
+exports.getFollowers = async (req, res) => {
 
     const followersList = req.user.followers;
 
     const followers = [];
 
-    await followersList.forEach(userId =>{
+    await followersList.forEach(userId => {
         User.findById(userId)
-        .then(user=>{
-            followers.push(user);
-        }).catch(e=>console.log(e));
+            .then(user => {
+                followers.push(user);
+            }).catch(e => console.log(e));
     });
 
 
-
-
 }
+
+
+exports.postDeleteNotification = (req,res) => {
+    
+    const notificationType = req.body.notificationType;
+
+    User.findById(req.user._id).then( async user=>{
+
+        const notifications = await user.notifications;
+        const index = await notifications.findIndex(notification=>{
+            return notification.type == notificationType;
+        });
+        await notifications.splice(index,1);
+
+        user.notifications = notifications;
+
+        user.save() 
+
+    })
+    .then(res.redirect("back"))
+    .catch(e=>console.log(e));
+
+} 

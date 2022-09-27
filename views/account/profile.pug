@@ -1,137 +1,149 @@
 include ../includes/head
 
-.container 
+if(!user.isBlocked)
+
+  .container 
     .row.pt-4 
-        if(errorMessage)
-            div(role="alert").alert.alert-danger #{errorMessage}
+      if(errorMessage)
+        div(role="alert").alert.alert-danger #{errorMessage}
 
-section(style='background-color: #ffbf00; ')
-  .container.py-5
-    .row
-      .col-lg-4
-        .card.mb-4
-          .card-body.text-center
-            img.rounded-circle.img-fluid(src='https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' alt='avatar' style='width: 150px;')
-            h5.my-3 #{user.username}
-            a.text-muted-mb-1.link(href="/getFollowers") #{user.followers.length} Followers | #{user.following.length} Following 
-            p.text-muted.mb-1 #{user.ability}
-            p.text-muted.mb-4 Bay Area, #{user.adress}
-            .d-flex.justify-content-center.mb-2
+  section(style='background-color: #ffbf00; ')
+    .container.py-5
+      .row
+        .col-lg-4
+          .card.mb-4
+            .card-body.text-center
+              img.rounded-circle.img-fluid(src='https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' alt='avatar' style='width: 150px;')
+              h5.my-3 #{user.username}
+              a.text-muted-mb-1.link(href="/getFollowers") #{user.followers.length} Followers | #{user.following.length} Following 
+              p.text-muted.mb-1 #{user.ability}
+              p.text-muted.mb-1 Bay Area, #{user.adress}
+              if(user.warnings > 0)
+                p.text-muted.mb-2 Bu kullanıcı #{user.warnings} adet uyarıya sahip 
+              .d-flex.justify-content-center.mb-2
 
-            if ((user.username != currentUser.username) && (user._id != isFollowed[0]))
-              form(action="/followUser" method="POST")
-                input(type="hidden" value=`${user._id}` name="followingId")
-                input(type="submit" value="Follow").btn.btn-primary
-                //- input.btn.btn-outline-primary.ms-1(type='submit') Message    
-            else if ((user.username != currentUser.username) && (user._id == isFollowed[0]))
-              form(action="/unfollowUser" method="POST")
-                input(type="hidden" value=`${user._id}` name="unfollowId")
-                input(type="submit" value="UnFollow").btn.btn-primary
-            else
+              if ((user.username != currentUser.username) && (user._id != isFollowed[0]))
+                form(action="/followUser" method="POST")
+                  input(type="hidden" value=`${user._id}` name="followingId")
+                  input(type="submit" value="Follow").btn.btn-primary
+                  //- input.btn.btn-outline-primary.ms-1(type='submit') Message    
+              else if ((user.username != currentUser.username) && (user._id == isFollowed[0]))
+                form(action="/unfollowUser" method="POST")
+                  input(type="hidden" value=`${user._id}` name="unfollowId")
+                  input(type="submit" value="UnFollow").btn.btn-primary
+              else
 
-        .card.mb-4.mb-lg-0
-          .card-body.p-0
-            ul.list-group.list-group-flush.rounded-3
-              li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
-                i.fas.fa-globe.fa-lg.text-warning
-                p.mb-0 https://mdbootstrap.com
-              li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
-                i.fab.fa-github.fa-lg(style='color: #333333;')
-                p.mb-0 mdbootstrap
-              li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
-                i.fab.fa-twitter.fa-lg(style='color: #55acee;')
-                p.mb-0 @mdbootstrap
-              li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
-                i.fab.fa-instagram.fa-lg(style='color: #ac2bac;')
-                p.mb-0 mdbootstrap
-              li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
-                i.fab.fa-facebook-f.fa-lg(style='color: #3b5998;')
-                p.mb-0 mdbootstrap
-      .col-lg-8
-        .card.mb-4
-          .card-body
-            .row
-              .col-sm-3
-                p.mb-0 Full Name
-              .col-sm-9
-                p.text-muted.mb-0 #{user.fullname}
-            hr
-            .row
-              .col-sm-3
-                p.mb-0 Email
-              .col-sm-9
-                p.text-muted.mb-0 #{user.email}
-            hr
-            .row
-              .col-sm-3
-                p.mb-0 Phone
-              .col-sm-9
-                p.text-muted.mb-0 #{user.phoneNumber}
-            hr
-            .row
-              .col-sm-3
-                p.mb-0 Referrer
-              .col-sm-9
-                p.text-muted.mb-0 #{ referrer ? referrer.username : "No refererrer"}
-            hr
-            .row
-              .col-sm-3
-                p.mb-0 Reference Number
-              .col-sm-9
-                p.text-muted.mb-0 #{user.referenceNumber}
-        .row
-          .col-md-6
-            .card.mb-4.mb-md-0
-              .card-body
-                p.mb-4
-                  span.text-primary.font-italic.me-1 assigment
-                  |  Project Status
-                p.mb-1(style='font-size: .77rem;') Web Design
-                .progress.rounded(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 80%' aria-valuenow='80' aria-valuemin='0' aria-valuemax='100')
-                p.mt-4.mb-1(style='font-size: .77rem;') Website Markup
-                .progress.rounded(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 72%' aria-valuenow='72' aria-valuemin='0' aria-valuemax='100')
-                p.mt-4.mb-1(style='font-size: .77rem;') One Page
-                .progress.rounded(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 89%' aria-valuenow='89' aria-valuemin='0' aria-valuemax='100')
-                p.mt-4.mb-1(style='font-size: .77rem;') Mobile Template
-                .progress.rounded(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 55%' aria-valuenow='55' aria-valuemin='0' aria-valuemax='100')
-                p.mt-4.mb-1(style='font-size: .77rem;') Backend API
-                .progress.rounded.mb-2(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 80%' aria-valuenow='80' aria-valuemin='0' aria-valuemax='100')
-          .col-md-6
-            .card.mb-4.mb-md-0
-              .card-body
-                p.mb-4
-                  span.text-primary.font-italic.me-1 assigment
-                  |  Project Status
-                p.mb-1(style='font-size: .77rem;') Web Design
-                .progress.rounded(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 80%' aria-valuenow='80' aria-valuemin='0' aria-valuemax='100')
-                p.mt-4.mb-1(style='font-size: .77rem;') Website Markup
-                .progress.rounded(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 72%' aria-valuenow='72' aria-valuemin='0' aria-valuemax='100')
-                p.mt-4.mb-1(style='font-size: .77rem;') One Page
-                .progress.rounded(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 89%' aria-valuenow='89' aria-valuemin='0' aria-valuemax='100')
-                p.mt-4.mb-1(style='font-size: .77rem;') Mobile Template
-                .progress.rounded(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 55%' aria-valuenow='55' aria-valuemin='0' aria-valuemax='100')
-                p.mt-4.mb-1(style='font-size: .77rem;') Backend API
-                .progress.rounded.mb-2(style='height: 5px;')
-                  .progress-bar(role='progressbar' style='width: 80%' aria-valuenow='80' aria-valuemin='0' aria-valuemax='100')
-        
-        if(currentUser.username == user.username)
-          .container.pt-2
-            .card.mb-4.mb-md-0
-              .row.pt-2
-              form(action="/apllyReferenceAgain" method="POST")
-                .col-md-6(style="float:left;").mt-1
-                  input(type="hidden" name="userId" value=`${user._id}`)
-                  input(type="hidden" name="username" value=`${user.username}`)
-                  input(type="text" style="float:right;" name="newReferenceNumber")
-                .col-md-6(style="float:right;")
-                  input(type="submit" value="Referans başvurusu yap").btn.btn-success
-              p.text-center.fw-bolder TEKRAR REFERANS NUMARASINA BAŞVURMA YAP
+          .card.mb-4.mb-lg-0
+            .card-body.p-0
+              ul.list-group.list-group-flush.rounded-3
+                li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
+                  i.fas.fa-globe.fa-lg.text-warning
+                  p.mb-0 https://mdbootstrap.com
+                li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
+                  i.fab.fa-github.fa-lg(style='color: #333333;')
+                  p.mb-0 mdbootstrap
+                li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
+                  i.fab.fa-twitter.fa-lg(style='color: #55acee;')
+                  p.mb-0 @mdbootstrap
+                li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
+                  i.fab.fa-instagram.fa-lg(style='color: #ac2bac;')
+                  p.mb-0 mdbootstrap
+                li.list-group-item.d-flex.justify-content-between.align-items-center.p-3
+                  i.fab.fa-facebook-f.fa-lg(style='color: #3b5998;')
+                  p.mb-0 mdbootstrap
+                if(currentUser.isAdmin)
+                  form(action = "/admin/warnUser" method = "POST").text-center.pt-3
+                    input(value=`${user._id}` name="warnedUserId" type="hidden")
+                    input(type="submit" value="Warn User").btn.btn-danger
+
+        .col-lg-8
+          .card.mb-4
+            .card-body
+              .row
+                .col-sm-3
+                  p.mb-0 Full Name
+                .col-sm-9
+                  p.text-muted.mb-0 #{user.fullname}
+              hr
+              .row
+                .col-sm-3
+                  p.mb-0 Email
+                .col-sm-9
+                  p.text-muted.mb-0 #{user.email}
+              hr
+              .row
+                .col-sm-3
+                  p.mb-0 Phone
+                .col-sm-9
+                  p.text-muted.mb-0 #{user.phoneNumber}
+              hr
+              .row
+                .col-sm-3
+                  p.mb-0 Referrer
+                .col-sm-9
+                  p.text-muted.mb-0 #{ referrer ? referrer.username : "No refererrer"}
+              hr
+              .row
+                .col-sm-3
+                  p.mb-0 Reference Number
+                .col-sm-9
+                  p.text-muted.mb-0 #{user.referenceNumber}
+          .row
+            .col-md-6
+              .card.mb-4.mb-md-0
+                .card-body
+                  p.mb-4
+                    span.text-primary.font-italic.me-1 assigment
+                    |  Project Status
+                  p.mb-1(style='font-size: .77rem;') Web Design
+                  .progress.rounded(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 80%' aria-valuenow='80' aria-valuemin='0' aria-valuemax='100')
+                  p.mt-4.mb-1(style='font-size: .77rem;') Website Markup
+                  .progress.rounded(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 72%' aria-valuenow='72' aria-valuemin='0' aria-valuemax='100')
+                  p.mt-4.mb-1(style='font-size: .77rem;') One Page
+                  .progress.rounded(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 89%' aria-valuenow='89' aria-valuemin='0' aria-valuemax='100')
+                  p.mt-4.mb-1(style='font-size: .77rem;') Mobile Template
+                  .progress.rounded(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 55%' aria-valuenow='55' aria-valuemin='0' aria-valuemax='100')
+                  p.mt-4.mb-1(style='font-size: .77rem;') Backend API
+                  .progress.rounded.mb-2(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 80%' aria-valuenow='80' aria-valuemin='0' aria-valuemax='100')
+            .col-md-6
+              .card.mb-4.mb-md-0
+                .card-body
+                  p.mb-4
+                    span.text-primary.font-italic.me-1 assigment
+                    |  Project Status
+                  p.mb-1(style='font-size: .77rem;') Web Design
+                  .progress.rounded(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 80%' aria-valuenow='80' aria-valuemin='0' aria-valuemax='100')
+                  p.mt-4.mb-1(style='font-size: .77rem;') Website Markup
+                  .progress.rounded(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 72%' aria-valuenow='72' aria-valuemin='0' aria-valuemax='100')
+                  p.mt-4.mb-1(style='font-size: .77rem;') One Page
+                  .progress.rounded(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 89%' aria-valuenow='89' aria-valuemin='0' aria-valuemax='100')
+                  p.mt-4.mb-1(style='font-size: .77rem;') Mobile Template
+                  .progress.rounded(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 55%' aria-valuenow='55' aria-valuemin='0' aria-valuemax='100')
+                  p.mt-4.mb-1(style='font-size: .77rem;') Backend API
+                  .progress.rounded.mb-2(style='height: 5px;')
+                    .progress-bar(role='progressbar' style='width: 80%' aria-valuenow='80' aria-valuemin='0' aria-valuemax='100')
+
+          if(currentUser.username == user.username)
+            .container.pt-2
+              .card.mb-4.mb-md-0
+                .row.pt-2
+                form(action="/apllyReferenceAgain" method="POST")
+                  .col-md-6(style="float:left;").mt-1
+                    input(type="hidden" name="userId" value=`${user._id}`)
+                    input(type="hidden" name="username" value=`${user.username}`)
+                    input(type="text" style="float:right;" name="newReferenceNumber")
+                  .col-md-6(style="float:right;")
+                    input(type="submit" value="Referans başvurusu yap").btn.btn-success
+                p.text-center.fw-bolder TEKRAR REFERANS NUMARASINA BAŞVURMA YAP
+
+else 
+  h1(style="color : white;") BU KULLANICI BLOKE EDİLMİŞTİR

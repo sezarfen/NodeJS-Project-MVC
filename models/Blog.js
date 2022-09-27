@@ -32,31 +32,17 @@ const blogSchema = mongoose.Schema({
         required : true
     },
 
+    
+    editorName : {
+        type: String,
+        required : true
+    },
+
     comments : [
         {
             commentId:{
                 type: String,
                 required: true
-            },
-
-            publisherName:{
-                type:String,
-                required:true
-            },
-
-            publisherId: {
-                type:String,
-                ref:"User",
-                required:true
-            },
-            content:{
-                type:String,
-                required: true
-
-            },
-            postedAt:{
-                type:String,
-                default: new Date().toUTCString()
             }
         }
     ]

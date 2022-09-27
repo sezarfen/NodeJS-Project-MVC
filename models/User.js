@@ -83,7 +83,17 @@ const userSchema = mongoose.Schema({
         default: "111111"
     },
 
-    notifications: []
+    notifications: [],
+
+    warnings : {
+        type: Number,
+        default : 0
+    },
+
+    isBlocked : {
+        type: Boolean,
+        default : false
+    }
 
 
 })

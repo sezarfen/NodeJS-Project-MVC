@@ -10,6 +10,7 @@ exports.getBlogs = async () => {
           content
           imageUrl
           editorId
+          editorName
         }
       }
     
@@ -43,12 +44,7 @@ exports.getBlogById = async (id) => {  // Bunu da MutateBlog'a aktarabiliriz
           imageUrl
           editorId
           comments{
-            id
-            publisherId
             commentId
-            content
-            postedAt
-            publisherName
           }
         }
       }

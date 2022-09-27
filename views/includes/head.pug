@@ -17,7 +17,7 @@ html(lang="en")
                             use(xlink:href="#bootstrap")
 
                     ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-center.mb-md-0
-                                    
+
                         li
                             a(href="/").nav-link.px-2.text-warning Home
                         if(isAuthenticated)
@@ -29,7 +29,7 @@ html(lang="en")
                                 a(href="/admin/blogs" class= currentUrl=="/admin/blogs" ? "currentLink" : "").nav-link.px-2.text-warning Edit Blogs
                             li
                                 a(href="/subUsers" class= currentUrl =="/subUsers" ? "currentLink" : "").nav-link.px-2.text-warning SubUsers
-                    
+
 
                     div.text-end
                     if (!isAuthenticated)

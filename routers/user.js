@@ -11,4 +11,5 @@ router.get("/blogIndex/:blogId",userController.getBlogIndex);
 
 router.post("/newBlogComment" , isAuthenticated, userController.postNewComment)
 
+
 module.exports = router;

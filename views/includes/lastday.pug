@@ -4,10 +4,11 @@ div.d-flex.flex-column.align-items-stretch.flex-shrink-0.bg-white(style="width: 
         span.fs-5.fw-semibold Yeni Eklenenler
 
     each blog in blogs
+        - blogContent = blog.content < 100 ? blog.content.slice(0,100) + "..." : blog.content
         div.list-group.list-group-flush.border-bottom.scrollarea
             a(href=`/blogIndex/${blog.id}` aria-current="true").list-group-item.list-group-item-action.active.py-3.lh-sm
                 div.d-flex.w-100.align-items-center.justify-content-between
                     strong.mb-1List #{blog.title}
                     small Wed
-                div.col-10.mb-1.small #{blog.content}
+                div.col-10.mb-1.small #{blogContent}
 

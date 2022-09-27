@@ -31,7 +31,8 @@ const resolvers = {
                 title: args.input.title,
                 content: args.input.content,
                 imageUrl: args.input.imageUrl,
-                editorId: args.input.editorId
+                editorId: args.input.editorId,
+                editorName: args.input.editorName
             });
 
             await blog.save().then((data) => { console.log(data) })
@@ -78,7 +79,7 @@ const resolvers = {
                     adress: args.input.adress,
                     ability : args.input.ability,
                     phoneNumber: args.input.phoneNumber,
-                    createdAt: new Date().toUTCString()
+                    createdAt: new Date().toUTCString(),
                 });
 
                 User.findOne({ referenceNumber: args.input.referrerNumber }).then(user => {

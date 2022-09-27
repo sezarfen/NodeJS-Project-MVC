@@ -21,5 +21,6 @@ router.post("/acceptComment", adminController.postAcceptComment)
 router.post("/rejectComment", adminController.postRejectComment)
 
 router.post("/deleteComment", adminController.postdeleteComment)
+router.post("/warnUser" , adminController.postWarnUser)
 
 module.exports = router;

@@ -49,7 +49,24 @@ include ../includes/head.pug
                                     form.form(action="/admin/rejectComment" method="POST")
                                         input(type="hidden" value=`${newComment._id}` name="commentId")
                                         input(type="submit" value="Reddet").btn.btn-danger
+        if(warningNotification) 
+            each notification in warningNotification
+                table.table.table-dark.table-striped.table-hover
+                    thead
+                        tr
+                            td Type
+                            td Content 
+                            td İşlemler
+                    tbody
+                        tr 
+                            td Warning Bildiri
+                            td #{notification.content}
+                            td
+                                .btn-group
+                                    form.form(action="/deleteNotification" method="POST")
+                                        input(type="hidden" value=`${notification.type}` name="notificationType").btn.btn-danger
+                                        input(type="submit" value="Kaldır").btn.btn-danger
 
-    
+
         else 
             h1(style="color : white") No Notifications
