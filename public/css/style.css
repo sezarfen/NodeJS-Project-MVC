@@ -27,3 +27,18 @@
     border-color:white;
     border: 1px !important;
 }
+
+.myCard{
+
+    width: 300px;
+    height: 300px;
+    background-color: bisque;
+    border-radius: 10px;
+    border: solid;
+    border-width: 1px;
+
+}
+
+.bold{
+    font-weight: bold;
+}

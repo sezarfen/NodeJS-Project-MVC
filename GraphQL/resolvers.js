@@ -1,7 +1,7 @@
 const Blog = require("../models/Blog");
 const User = require("../models/User");
 const bcrypt = require('bcrypt');
-const adminController = require("../controllers/adminController");
+const adminLog = require("../models/adminLog");
 
 const resolvers = {
 
@@ -22,7 +22,12 @@ const resolvers = {
                     return user
                 })
             }).catch(err => console.log(err));
+        },
+
+        logs : () =>{
+            return adminLog.find().then(logs=>logs).catch(e=>console.log(e));
         }
+        
     },
 
     Mutation: {
@@ -72,28 +77,28 @@ const resolvers = {
 
 
                 const newUser = User({
-                    fullname : args.input.fullname,
-                    username : args.input.username,
-                    email : args.input.email,
-                    password : hashedPassword,
+                    fullname: args.input.fullname,
+                    username: args.input.username,
+                    email: args.input.email,
+                    password: hashedPassword,
                     adress: args.input.adress,
-                    ability : args.input.ability,
+                    ability: args.input.ability,
                     phoneNumber: args.input.phoneNumber,
                     createdAt: new Date().toUTCString(),
                 });
 
                 User.findOne({ referenceNumber: args.input.referrerNumber }).then(user => {
-                    if(user){
+                    if (user) {
                         const notifications = user.notifications ? user.notifications : [];
                         notifications.push({
-                            type:"reference",
-                            id : newUser._id,
-                            username : newUser.username,
+                            type: "reference",
+                            id: newUser._id,
+                            username: newUser.username,
                         });
                         user.notifications = notifications;
                         return user.save();
-                    }           
-                    
+                    }
+
                 })
 
                 await newUser.save();
@@ -104,68 +109,68 @@ const resolvers = {
         },
 
 
-        followUser: (_,args) =>{
+        followUser: (_, args) => {
 
-            User.findById(args.input.currentUserId).then(async user=>{
-                
+            User.findById(args.input.currentUserId).then(async user => {
+
                 const following = user.following;
                 await following.push(args.input.followingId);
                 user.following = following;
-                user.save().then(()=>{
-                    User.findById(args.input.followingId).then( async user2=>{
+                user.save().then(() => {
+                    User.findById(args.input.followingId).then(async user2 => {
                         const followers = user2.followers;
                         await followers.push(args.input.currentUserId);
                         user2.followers = followers;
                         user2.save();
                     })
                 })
-                
 
-            }).catch(e=>console.log(e));
 
-            
+            }).catch(e => console.log(e));
+
+
             return "İşlemler başarılı"
 
         },
-        
-        unfollowUser: (_,args) =>{
 
-            User.findById(args.input.currentUserId).then(async user=>{
-                
+        unfollowUser: (_, args) => {
+
+            User.findById(args.input.currentUserId).then(async user => {
+
                 const following = user.following;
 
-                const index = await following.findIndex(id=>{
+                const index = await following.findIndex(id => {
                     return id == args.input.unfollowId
                 })
 
-                following.splice(index,1);
-                
-                user.following = following;
-                
-                user.save().then(()=>{
+                following.splice(index, 1);
 
-                    User.findById(args.input.unfollowId).then( async user2=>{
+                user.following = following;
+
+                user.save().then(() => {
+
+                    User.findById(args.input.unfollowId).then(async user2 => {
 
                         const followers = user2.followers;
 
-                        const index = await followers.findIndex(id=>{
+                        const index = await followers.findIndex(id => {
                             return id == args.input.currentUserId;
                         })
 
-                        followers.splice(index,1);
+                        followers.splice(index, 1);
 
                         user2.followers = followers;
 
                         user2.save();
-                        
-                    }).catch(e=>console.log(e));
-               
-                }).catch(e=>console.log(e));
- 
 
-            }).catch(e=>console.log(e));
+                    }).catch(e => console.log(e));
 
-            
+                }).catch(e => console.log(e));
+
+
+            }).catch(e => console.log(e));
+
+
             return "İşlemler başarılı";
 
         },

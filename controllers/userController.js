@@ -1,6 +1,7 @@
 const graphqlFunctions = require("../GraphQL/graphqlFunctions");
 const Comment = require("../models/Comment");
 const User = require("../models/User");
+const {isEmpty} = require("ramda")
 
 
 exports.getIndex = (req, res, next) => {
@@ -25,9 +26,7 @@ exports.getBlogIndex = async (req, res, next) => {
     const blogId = req.params.blogId;            // link/:params olarak almak gerekiyor
    
     graphqlFunctions.getBlogById(blogId).then(async blog => {
-
-        // bloğun içerisinde sadece commentId tutmaya yönelik geliştirmenin ilk adımı
-       
+               
         const comments = await Comment.find({
 
         _id : {$in: blog.comments.map(comment=>comment.commentId)}, 
@@ -39,7 +38,7 @@ exports.getBlogIndex = async (req, res, next) => {
         res.render("mainPages/blogindex", {
             title: "Blogs",
             blog: blog,
-            comments: comments || [],
+            comments: comments || R.isEmpty(comments),
             currentUser: req.user || {},
             infoMessage : infoMessage
         });

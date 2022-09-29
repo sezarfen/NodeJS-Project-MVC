@@ -2,6 +2,7 @@ const graphqlFunctions = require("../GraphQL/graphqlFunctions");
 const bcrypt = require('bcrypt');
 const Login = require("../models/Login");
 const User = require("../models/User");
+const { isEmpty } = require("ramda");
 
 exports.postRegister = (req, res) => {
     const referrerNumber = req.body.referrerNumber ? req.body.referrerNumber : "111111";
@@ -19,7 +20,6 @@ exports.postRegister = (req, res) => {
         phoneNumber
         }
       }`;
-
 
     const variables = {
         "input": {
@@ -87,7 +87,7 @@ exports.postLogin = (req, res) => {
                         return req.session.errorMessage = "Hatalı ya da eksik şifre"
                     }
 
-                    if(user.isBlocked){
+                    if (user.isBlocked) {
 
                         req.session.errorMessage = "Hesabınız bloke edilmiştir , bilgi almak için yetkililer ile iletişime geçebilirsiniz"
                         return res.redirect("/login");
@@ -128,7 +128,8 @@ exports.getLogout = (req, res) => {
 
 }
 
-const notificationFinder = async (req ,type) => {
+const notificationFinder = async (req, type) => {
+
     const notifications = await req.user.notifications;
     return notifications.filter(notification => notification.type == `${type}`)
 
@@ -136,15 +137,17 @@ const notificationFinder = async (req ,type) => {
 
 exports.getNotifications = async (req, res) => {
 
-    const referenceNotifications = await notificationFinder(req,"reference")
-    const commentNotifications = await notificationFinder(req,"comment")
-    const warningNotification =  await notificationFinder(req,"warning")
+    const referenceNotifications = await notificationFinder(req, "reference")
+    const commentNotifications = await notificationFinder(req, "comment")
+    const warningNotifications = await notificationFinder(req, "warning")
+    const messageNotifications = await notificationFinder(req, "message")
 
     res.render("account/notifications", {
         title: "Notifications",
         referenceNotifications: referenceNotifications,
         commentNotifications: commentNotifications,
-        warningNotification : warningNotification
+        warningNotifications: warningNotifications,
+        messageNotifications: messageNotifications
     });
 
 }
@@ -207,22 +210,27 @@ exports.postRejectRequest = (req, res) => {
 
 }
 
-exports.getSubUsers = (req, res, next) => {
+exports.getSubUsers = async (req, res, next) => {
 
     // 2 SAAT ASYNC OLAYLARIYLA UĞRAŞTIKRAN SONRA SİNİRLENİLİP setTimeout KULLANILMIŞTIR İLERİDE DÜZELTİLİR
 
-    const subUsers = [];-
+    var subUsers = [];
 
 
-    req.user.subUsers.forEach(subUser => {
+    await req.user.subUsers.forEach(subUser => {
         User.find({ _id: subUser._id })
             .then(user => {
                 subUsers.push(user[0]);
             });
     })
 
-
     setTimeout(() => {
+
+        if (isEmpty(subUsers)) {   // Ufakda olsa Ramda kullanmış olduk
+            subUsers = false;
+        }
+
+
         res.render("account/subUsers", {
 
             title: "SubUsers",
@@ -230,7 +238,6 @@ exports.getSubUsers = (req, res, next) => {
 
         })
     }, 500)
-
 
 }
 
@@ -422,24 +429,46 @@ exports.getFollowers = async (req, res) => {
 }
 
 
-exports.postDeleteNotification = (req,res) => {
-    
+exports.postDeleteNotification = (req, res) => {
+
     const notificationType = req.body.notificationType;
 
-    User.findById(req.user._id).then( async user=>{
+    User.findById(req.user._id).then(async user => {
 
         const notifications = await user.notifications;
-        const index = await notifications.findIndex(notification=>{
+        const index = await notifications.findIndex(notification => {
             return notification.type == notificationType;
         });
-        await notifications.splice(index,1);
+        await notifications.splice(index, 1);
 
         user.notifications = notifications;
 
-        user.save() 
+        user.save()
 
     })
-    .then(res.redirect("back"))
-    .catch(e=>console.log(e));
+        .then(res.redirect("back"))
+        .catch(e => console.log(e));
 
-} 
+}
+
+
+exports.postMessageToSubUsers = (req, res) => {
+
+    const messageContent = req.body.messageContent
+
+    User.findById(req.user._id).then(async user => {
+
+        const userIds = await user.subUsers;
+        await userIds.forEach(async userId => {
+
+            await User.findById(userId).then(async user => {
+
+                const notifications = await user.notifications;
+                await notifications.push({ type: "message", content: messageContent })
+                user.notifications = await notifications;
+                return user.save()
+
+            }).catch(e => console.log(e));
+        })// Sayfaya bu mesajı çıkartabiliriz
+    }).then(() => { console.log("Message Has been delievered"); res.redirect("back") }).catch(e => console.log(e));
+}

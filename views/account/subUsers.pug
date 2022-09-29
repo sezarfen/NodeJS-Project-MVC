@@ -2,10 +2,11 @@ include ../includes/head.pug
 
 
 .container.pt-5
-    div.mb-10
-        if(subUsers)
+    .row
+    div.mb-10.text-center
+        if(subUsers != [])
             each subUser in subUsers
-                table.table.table-dark.table-striped.table-hover
+                table.table.table-dark.table-striped.table-hover.text-center
                     thead
                         tr
                             td Username
@@ -27,5 +28,15 @@ include ../includes/head.pug
                                     form.form(action="/deleteSubUser" method="POST")
                                         input(type="hidden" value=`${subUser._id}` name="subUserId")
                                         input(type="submit" value="Kaldır").btn.btn-danger
+            .row.pt-5
+                .myCard
+                    form(action="/messageToSubUsers" method="POST")
+                        label(for="messageContent").required.form-label.bold Message Content
+                        textarea.form-control(aria-label="With textarea" name="messageContent" style="height:150px;")#messageContent            
+                        input(type="submit").btn.btn-info.mt-4
+
+
+
         else 
-            h1 No SubUsers
+            h1(style="color:white;") No SubUsers
+

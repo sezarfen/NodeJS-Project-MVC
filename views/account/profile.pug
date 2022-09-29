@@ -13,7 +13,7 @@ if(!user.isBlocked)
         .col-lg-4
           .card.mb-4
             .card-body.text-center
-              img.rounded-circle.img-fluid(src='https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' alt='avatar' style='width: 150px;')
+              img.rounded-circle.img-fluid(src='/img/userphoto.png' alt='avatar' style='width: 150px;')
               h5.my-3 #{user.username}
               a.text-muted-mb-1.link(href="/getFollowers") #{user.followers.length} Followers | #{user.following.length} Following 
               p.text-muted.mb-1 #{user.ability}
@@ -146,4 +146,11 @@ if(!user.isBlocked)
                 p.text-center.fw-bolder TEKRAR REFERANS NUMARASINA BAŞVURMA YAP
 
 else 
-  h1(style="color : white;") BU KULLANICI BLOKE EDİLMİŞTİR
+  .container 
+    .row.text-center
+      h1(style="color : white;") BU KULLANICI BLOKE EDİLMİŞTİR
+    if(isAdmin)
+      .row.text-center 
+        form(action="/admin/unblockUser" method="POST")
+          input(type="hidden" value=`${user._id}` name="userId")
+          input(type="submit" value="UNBLOCK USER").btn.btn-warning 

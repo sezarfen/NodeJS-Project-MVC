@@ -1,0 +1,16 @@
+include ../includes/head.pug
+
+.container.pt-5
+    div.mb-10
+        table.table.table-dark.table-striped.table-hover
+            thead
+                tr
+                    td Kullanıcı
+                    td İçerik
+                    td Tarih
+            tbody
+                each log in logs
+                    tr
+                    td #{log.user}
+                    td #{log.content}
+                    td #{log.date}

@@ -1,5 +1,13 @@
 module.exports = (req, res, next) => {
 
+    if(req.user){
+        if(req.user.isAdmin){
+            res.locals.isAdmin = req.user.isAdmin            
+        }
+        
+    }
+
+
     if(req.originalUrl == "/favicon.ico"){
      next();
     }

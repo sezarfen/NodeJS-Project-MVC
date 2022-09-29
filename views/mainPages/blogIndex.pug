@@ -22,11 +22,11 @@ section
       .col-sm-5.col-md-6.col-12.pb-4.text-white
         h1 Comments
         hr
-        if(comments !== [])
+        if(comments)
           each comment in comments
             if(comment.isActive)
               .comment.mt-4.text-justify.float-left
-              img.rounded-circle(src='https://i.imgur.com/yTFUilP.jpg' alt='' width='40' height='40')
+              img.rounded-circle(src='/img/userPhoto.png' alt='' width='40' height='40')
               h4(style="color: rgb(62, 225, 135)") #{comment.publisherName}
               span(style="color: blanchedalmond") #{comment.postedAt}
               br

@@ -33,6 +33,37 @@ exports.getBlogs = async () => {
 
 }
 
+exports.getLogs = async () => {
+
+    logsQuery = `
+    query Logs {
+        logs {
+          id
+          user
+          content
+          date
+        }
+      }
+    
+    `
+
+    const endpoint = "http://localhost:4000/graphql";
+    const headers = {
+        "content-type": "application/json",
+    };
+    const graphqlQuery = {
+        "query": logsQuery,
+    };
+
+    const response = await axios.post(endpoint, graphqlQuery, {
+        method: 'post',
+        headers: headers,
+    });
+
+    return response.data.data.logs; // data
+
+}
+
 exports.getBlogById = async (id) => {  // Bunu da MutateBlog'a aktarabiliriz
 
     blogQuery = `
@@ -59,7 +90,7 @@ exports.getBlogById = async (id) => {  // Bunu da MutateBlog'a aktarabiliriz
         "query": blogQuery,
         "variables": {
             "blogId": id
-          }
+        }
     };
 
     const response = await axios({
@@ -73,10 +104,10 @@ exports.getBlogById = async (id) => {  // Bunu da MutateBlog'a aktarabiliriz
 
 }
 
-exports.MutateBlog = async (query,variables) =>{
+exports.MutateBlog = async (query, variables) => {
 
     const endpoint = "http://localhost:4000/graphql";
-    
+
     const headers = {
         "content-type": "application/json",
     };

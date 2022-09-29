@@ -6,11 +6,16 @@ const fs = require('fs');
 
 const DeleteCommentNotificationFromAdmin = async (commentId) => {
 
+    console.log(commentId)
+
     const admins = await User.find({ isAdmin: true });
     admins.forEach(async (admin) => {
         const notifications = admin.notifications;
         const index = await notifications.findIndex(async notification => {
+            console.log(notification); // yine zamansal problemler yaşanıyor ara sıra 
+            // üsteki logu attım diye sanırım bekleyebildi ve newCommentId döndü
             const newComment = await notification.newComment
+            console.log(newComment);
             const newCommentId = await newComment._id
             return newCommentId.toString() === commentId.toString();
         });
@@ -138,14 +143,7 @@ exports.postDeleteBlog = async (req, res, next) => {
 
         res.redirect("/admin/blogs");
 
-
-
-
-
     }).catch(err => console.log(err));
-
-
-
 }
 
 exports.getEditBlog = (req, res, next) => {
@@ -159,10 +157,10 @@ exports.getEditBlog = (req, res, next) => {
         })
     })
 
-
 }
 
 exports.postEditBlog = async (req, res, next) => {
+
     const blog = await Blog.findOne({ _id: req.body.blogId }).then(blog => {
         return blog
     }).catch(e => console.log(e))
@@ -179,7 +177,6 @@ exports.postEditBlog = async (req, res, next) => {
         })
     }
 
-
     editQuery = `
     mutation Mutation($input: editBlogInputs!) {
         editBlog(input: $input) {
@@ -195,14 +192,13 @@ exports.postEditBlog = async (req, res, next) => {
     variables = {
         "input": {
             "id": req.body.blogId,
-            "content": content,
             "title": title,
+            "content": content,
             "imageUrl": file,
-            "editorId": req.user._id
+            "editorId": req.user._id,
+            "editorName": req.user.username
         }
     };
-
-
 
     graphqlFunctions.MutateBlog(editQuery, variables).then(blog => {
         res.redirect("/admin/blogs");
@@ -335,9 +331,42 @@ exports.postWarnUser = (req,res) =>{
         return user.save();
 
     }).then(()=>{
+
         res.redirect("back");
+
     })
 
+}
 
+exports.getLogs = (req,res) => {
+
+    graphqlFunctions.getLogs().then(logs=>{
+
+        res.render("adminPages/logs",{
+            title:"Logs",
+            logs:logs
+        })
+    })
+    
+
+    
+}
+
+exports.postUnblockUser = (req,res)=>{
+
+    const userId = req.body.userId
+
+    User.findById(userId).then(user=>{
+
+        user.isBlocked = false;
+        user.warnings = 0;
+        
+        return user.save();
+
+    }).then(()=>{
+
+        res.redirect("back");    
+    
+    }).catch(e=>console.log(e));
 
 }

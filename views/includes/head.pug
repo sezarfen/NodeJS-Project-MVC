@@ -24,12 +24,15 @@ html(lang="en")
                             li
                                 a(href="/notifications" class= currentUrl=="/notifications" ?"currentLink" : "").nav-link.px-2.text-warning Notifications
                             li
+                                a(href="/subUsers" class= currentUrl =="/subUsers" ? "currentLink" : "").nav-link.px-2.text-warning SubUsers
+                        if(isAdmin)
+                            
+                            li
                                 a(href="/admin/add-blog" class= currentUrl=="/admin/add-blog" ? "currentLink" : "").nav-link.px-2.text-warning Add Blog
                             li
                                 a(href="/admin/blogs" class= currentUrl=="/admin/blogs" ? "currentLink" : "").nav-link.px-2.text-warning Edit Blogs
                             li
-                                a(href="/subUsers" class= currentUrl =="/subUsers" ? "currentLink" : "").nav-link.px-2.text-warning SubUsers
-
+                                a(href="/admin/logs" class= currentUrl=="/admin/logs" ? "currentLink" : "").nav-link.px-2.text-warning Logs
 
                     div.text-end
                     if (!isAuthenticated)

@@ -34,5 +34,6 @@ router.get("/getFollowers", accountController.getFollowers);
 
 router.post("/deleteNotification" , accountController.postDeleteNotification)
 
+router.post("/messageToSubUsers" , accountController.postMessageToSubUsers)
 
 module.exports = router;

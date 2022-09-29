@@ -1,6 +1,5 @@
 const {gql} = require("apollo-server");
 
-
 const typeDefs = gql`
 
     type Blog{
@@ -43,10 +42,11 @@ const typeDefs = gql`
         id: ID!
     }
 
-    type Query{
-        blogs: [Blog!]!
-        blog(id: ID!): Blog!
-        users: [User!]!
+    type Log{
+        id: ID!
+        user: String!
+        content: String!
+        date: String!
     }
 
     input addBlogInputs{
@@ -90,6 +90,13 @@ const typeDefs = gql`
         unfollowId: ID!
     }
 
+    type Query{
+        blogs: [Blog!]!
+        blog(id: ID!): Blog!
+        users: [User!]!
+        logs: [Log!]
+    }
+
     type Mutation{
         addBlog(input: addBlogInputs!): Blog
         editBlog(input: editBlogInputs!): Blog
@@ -98,8 +105,6 @@ const typeDefs = gql`
         followUser(input: followUserInput!): String
         unfollowUser(input: unfollowUserInput!): String
     }
-
-
 `
 
 module.exports = {typeDefs};
