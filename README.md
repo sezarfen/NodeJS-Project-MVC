@@ -21,7 +21,8 @@ There are some npm packages I used in this project:
 -> Hashing passwords
 #### axios
 -> fetching data from GraphQL
-
+#### Ramda
+-> For some functional operations
 
 ## Features
 - Blog publishing system / comments.. etc.
