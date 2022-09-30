@@ -32,6 +32,7 @@ There are some npm packages I used in this project:
 - SubUser system
 - Now users can warnable and blockable
 - Admin Logs added
+- Now GraphQL needs API_KEY for being able to share data
 
 ------------
 
