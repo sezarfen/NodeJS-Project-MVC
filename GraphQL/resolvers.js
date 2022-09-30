@@ -2,32 +2,50 @@ const Blog = require("../models/Blog");
 const User = require("../models/User");
 const bcrypt = require('bcrypt');
 const adminLog = require("../models/adminLog");
+const { AuthenticationError } = require("apollo-server");
 
 const resolvers = {
 
     Query: {
-        blogs: () => {
+        blogs: async (_, __, context) => {
             // console.log('adana merkez patlıyor herkes');  // Enes Pazar abiye selamlar :D
-            return Blog.find().then(blogs => blogs).catch(err => console.log(err));
+
+            if (await context.isAuthenticated()) {  // await ile almazsam promise dönüyor ve istenilen mantığa ulaşamıyoruz
+                return Blog.find().then(blogs => blogs).catch(err => console.log(err));
+            } else {
+                throw new AuthenticationError("Please Check Your API_KEY");
+            }
+
         },
 
-        blog: (parent, args) => {
-            return Blog.findById(args.id).then(blog => blog).catch(err => console.log(err));
+        blog: async (parent, args, context) => {
+            if (await context.isAuthenticated()) {
+                return Blog.findById(args.id).then(blog => blog).catch(err => console.log(err));
+            } else {
+                throw new AuthenticationError("Please Check Your API_KEY");
+            }
         },
 
-        users: () => {
-            return User.find().then(users => {
-                return users.map(user => {
-                    user.id = user._id;
-                    return user
-                })
-            }).catch(err => console.log(err));
+        users: async (_, __, context) => {
+
+            if (await context.isAuthenticated()) {
+
+                return User.find().then(users => {
+                    return users.map(user => {
+                        user.id = user._id;
+                        return user
+                    })
+                }).catch(err => console.log(err));
+
+            } else {
+                throw new AuthenticationError("Please Check Your API_KEY");
+            }
         },
 
-        logs : () =>{
-            return adminLog.find().then(logs=>logs).catch(e=>console.log(e));
+        logs: () => {
+            return adminLog.find().then(logs => logs).catch(e => console.log(e));
         }
-        
+
     },
 
     Mutation: {
@@ -66,7 +84,6 @@ const resolvers = {
                 console.log(result);
             }).catch(err => console.log(err));
 
-
             return "Blog başarıyla silindi";
         },
 
@@ -74,7 +91,6 @@ const resolvers = {
             const password = args.input.password;
 
             return bcrypt.hash(password, 10).then(async hashedPassword => {
-
 
                 const newUser = User({
                     fullname: args.input.fullname,
@@ -108,7 +124,6 @@ const resolvers = {
 
         },
 
-
         followUser: (_, args) => {
 
             User.findById(args.input.currentUserId).then(async user => {
@@ -125,9 +140,7 @@ const resolvers = {
                     })
                 })
 
-
             }).catch(e => console.log(e));
-
 
             return "İşlemler başarılı"
 
@@ -167,14 +180,11 @@ const resolvers = {
 
                 }).catch(e => console.log(e));
 
-
             }).catch(e => console.log(e));
-
 
             return "İşlemler başarılı";
 
         },
-
 
 
     },

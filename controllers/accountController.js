@@ -141,13 +141,14 @@ exports.getNotifications = async (req, res) => {
     const commentNotifications = await notificationFinder(req, "comment")
     const warningNotifications = await notificationFinder(req, "warning")
     const messageNotifications = await notificationFinder(req, "message")
-
+    const apiNotifications = await notificationFinder(req, "newapikey")
     res.render("account/notifications", {
         title: "Notifications",
         referenceNotifications: referenceNotifications,
         commentNotifications: commentNotifications,
         warningNotifications: warningNotifications,
-        messageNotifications: messageNotifications
+        messageNotifications: messageNotifications,
+        apiNotifications : apiNotifications
     });
 
 }
@@ -215,7 +216,6 @@ exports.getSubUsers = async (req, res, next) => {
     // 2 SAAT ASYNC OLAYLARIYLA UĞRAŞTIKRAN SONRA SİNİRLENİLİP setTimeout KULLANILMIŞTIR İLERİDE DÜZELTİLİR
 
     var subUsers = [];
-
 
     await req.user.subUsers.forEach(subUser => {
         User.find({ _id: subUser._id })
@@ -287,11 +287,9 @@ exports.getProfile = async (req, res) => {
 
         })
 
-
     }).catch(e => console.log(e))
 
 }
-
 
 exports.getSpecificProfile = async (req, res, next) => {
 
@@ -312,10 +310,7 @@ exports.getSpecificProfile = async (req, res, next) => {
             });
         }).catch(e => console.log(e));
 
-
-
     }).catch(e => next("404 Profile Not Found"));
-
 
 }
 
@@ -355,10 +350,7 @@ exports.getReferenceAgain = async (req, res) => {
 
     res.redirect("/profile");
 
-
 }
-
-
 
 exports.postFollowUser = (req, res) => {
     const followingId = req.body.followingId;
@@ -375,14 +367,11 @@ exports.postFollowUser = (req, res) => {
         }
     }
 
-
     graphqlFunctions.MutateBlog(followQuery, variables).then(() => {
 
         res.redirect(`back`)
 
     }).catch(e => console.log(e));
-
-
 
 }
 
@@ -401,12 +390,9 @@ exports.postUnfollowUser = (req, res) => {
         }
     }
 
-
     graphqlFunctions.MutateBlog(unfollowQuery, variables).then(() => {
 
-
         res.redirect(`back`)
-
 
     }).catch(e => console.log(e));
 
@@ -425,9 +411,7 @@ exports.getFollowers = async (req, res) => {
             }).catch(e => console.log(e));
     });
 
-
 }
-
 
 exports.postDeleteNotification = (req, res) => {
 
@@ -450,7 +434,6 @@ exports.postDeleteNotification = (req, res) => {
         .catch(e => console.log(e));
 
 }
-
 
 exports.postMessageToSubUsers = (req, res) => {
 

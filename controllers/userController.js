@@ -1,7 +1,8 @@
 const graphqlFunctions = require("../GraphQL/graphqlFunctions");
 const Comment = require("../models/Comment");
 const User = require("../models/User");
-const {isEmpty} = require("ramda")
+const {isEmpty, not} = require("ramda");
+const Apikey = require("../models/Apikey");
 
 
 exports.getIndex = (req, res, next) => {
@@ -80,4 +81,42 @@ exports.postNewComment = async (req,res)=>{  // Eğer kullanıcı giriş yapmam�
         res.redirect("back");
 
     }).catch(e=>console.log(e));
+}
+
+
+const apiKeyGenerator = (req,text)=>{
+
+    const newApiKey = new Apikey({
+        userId : req.user._id
+    });
+
+    User.findById(req.user._id).then(async user=>{ 
+        const notifications = await user.notifications;
+        await notifications.push({type: "newapikey", content :`${text} ${newApiKey.key}`});
+        user.notifications = await notifications;
+        user.save();
+    });
+
+    newApiKey.save()
+
+}
+
+
+exports.postNewApiKey = async (req,res) =>{
+
+    const apikey = await Apikey.findOne({userId : req.user._id}).then(key => key).catch(e=>console.log(e));
+
+    if(apikey){
+        await apikey.delete();
+
+        apiKeyGenerator(req,"yeni API_KEY isteğiniz : ");
+
+    }else{
+
+        apiKeyGenerator(req,"API_KEY oluşturuldu : ")
+
+    }
+
+
+    res.redirect("/notifications");
 }

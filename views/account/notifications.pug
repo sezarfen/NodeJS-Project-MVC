@@ -86,6 +86,17 @@ include ../includes/head.pug
                                     form.form(action="/deleteNotification" method="POST")
                                         input(type="hidden" value=`${notification.type}` name="notificationType").btn.btn-danger
                                         input(type="submit" value="Kaldır").btn.btn-danger
+        if(apiNotifications) 
+            each notification in apiNotifications
+                table.table.table-dark.table-striped.table-hover
+                    thead
+                        tr
+                            td Type
+                            td Content 
+                    tbody
+                        tr 
+                            td Referrerden Mesaj
+                            td #{notification.content}
 
 
 

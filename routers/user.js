@@ -11,5 +11,7 @@ router.get("/blogIndex/:blogId",userController.getBlogIndex);
 
 router.post("/newBlogComment" , isAuthenticated, userController.postNewComment)
 
+router.post("/createApiKey" , isAuthenticated , userController.postNewApiKey)
+
 
 module.exports = router;
